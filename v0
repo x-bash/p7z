@@ -7,6 +7,8 @@ xrc os/v0
 
 if ! command -v 7z; then
 
+xrc log init p7z
+
 _p7z_zip_init(){
     local target="$HOME/.x-cmd/.bin/7z"
     mkdir -p "$target"
@@ -15,7 +17,10 @@ _p7z_zip_init(){
 
     local osname="$(os name)"
 
+    p7z_log debug "detect osname/arch: $osname/$aarch"
+
     if [ "$osname" = "win" ]; then
+        p7z_log debug Downloading: "https://gitee.com/static-build/p7zip/raw/master/bin/7za.exe"
         if CACHE="$target/7za.exe" xrc_curl "https://gitee.com/static-build/p7zip/raw/master/bin/7za.exe"; then   
             chmod +x "$target/7za.exe"
             eval "
@@ -27,7 +32,8 @@ _p7z_zip_init(){
         fi
     else
         case "$osname" in
-            linux|darwin)      
+            linux|darwin)
+                p7z_log debug "Downloading: https://gitee.com/static-build/p7zip/raw/master/bin/7za.exe"
                 if  CACHE="$target/7zr" xrc_curl "https://gitee.com/static-build/p7zip/raw/master/bin/7zr.$osname.$arch" && \
                     CACHE="$target/7za.7z" xrc_curl "https://gitee.com/static-build/p7zip/raw/master/bin/7za.$osname.$arch.7z";
                 then
